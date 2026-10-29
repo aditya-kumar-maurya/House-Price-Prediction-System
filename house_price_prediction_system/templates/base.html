@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}House Price Prediction System{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="{{ url_for('home') }}"><span class="brand-icon">⌂</span><span>House Price<br><b>Prediction System</b></span></a>
+  <nav>
+    <a href="{{ url_for('home') }}" class="{{ 'active' if request.endpoint=='home' else '' }}">⌂ <span>Home</span></a>
+    <a href="{{ url_for('home') }}#analytics">▦ <span>Dashboard</span></a>
+    <a href="{{ url_for('predict') }}" class="{{ 'active' if request.endpoint=='predict' else '' }}">◉ <span>Prediction</span></a>
+    <a href="{{ url_for('analysis') }}" class="{{ 'active' if request.endpoint=='analysis' else '' }}">▥ <span>Analysis</span></a>
+    <a href="{{ url_for('houses') }}" class="{{ 'active' if request.endpoint=='houses' else '' }}">⌂ <span>Houses</span></a>
+    <a href="{{ url_for('dataset') }}" class="{{ 'active' if request.endpoint=='dataset' else '' }}">▤ <span>Dataset</span></a>
+    <a href="{{ url_for('model_page') }}" class="{{ 'active' if request.endpoint=='model_page' else '' }}">◈ <span>Model</span></a>
+    <a href="{{ url_for('history') }}" class="{{ 'active' if request.endpoint=='history' else '' }}">◷ <span>History</span></a>
+    <a href="{{ url_for('about') }}" class="{{ 'active' if request.endpoint=='about' else '' }}">ⓘ <span>About</span></a>
+  </nav>
+<div class="sidebar-promo">
+
+    <img
+        src="{{ url_for('static', filename='images/property_banner.png') }}"
+        alt="Discover the Right Property with Data and AI"
+        class="promo-house-image"
+    >
+    
+</div>
+</aside>
+<main class="main">
+<header class="topbar">
+  <div class="searchbox">⌕ <input id="quickSearch" placeholder="Search location, area or property type..." aria-label="Search"></div>
+  <div class="top-links"><a href="{{ url_for('home') }}">Home</a><a href="{{ url_for('home') }}#analytics">Dashboard</a><a href="{{ url_for('predict') }}">Prediction</a><a href="{{ url_for('analysis') }}">Analysis</a><a href="{{ url_for('houses') }}">Houses</a><a href="{{ url_for('dataset') }}">Dataset</a><a href="{{ url_for('model_page') }}">Model</a><a href="{{ url_for('history') }}">History</a><a href="{{ url_for('about') }}">About</a></div>
+</header>
+{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-wrap">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }} <button onclick="this.parentElement.remove()">×</button></div>{% endfor %}</div>{% endif %}{% endwith %}
+<section class="page-content">{% block content %}{% endblock %}</section>
+<footer><span>⌂ House Price Prediction System</span><span>Python · Flask · Machine Learning · PostgreSQL</span><span>© 2026 Demo Project</span></footer>
+</main>
+</body></html>

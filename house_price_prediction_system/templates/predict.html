@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block title %}Prediction{% endblock %}{% block content %}
+<div class="page-title"><div><span class="eyebrow">MACHINE LEARNING</span><h1>House Price Prediction</h1><p>Enter property details to estimate the market price.</p></div></div>
+<div class="two-col prediction-layout">
+<section class="section-card"><div class="section-heading"><h2>⌂ Property Details</h2></div>
+<form method="post" class="form-grid">
+<label>City<select name="city">{% for c in ['Hyderabad','Bangalore','Mumbai','Delhi','Pune','Chennai','Kolkata','Noida','Gurgaon','Ahmedabad'] %}<option {% if form.city==c %}selected{% endif %}>{{ c }}</option>{% endfor %}</select></label>
+<label>Area (sq ft)<input type="number" name="area_sqft" min="100" max="20000" value="{{ form.area_sqft }}" required></label>
+<label>Bedrooms<select name="bedrooms">{% for n in range(1,7) %}<option {% if form.bedrooms|string==n|string %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>
+<label>Bathrooms<select name="bathrooms">{% for n in range(1,6) %}<option {% if form.bathrooms|string==n|string %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>
+<label>House Type<select name="house_type">{% for x in ['Apartment','Independent House','Villa','Builder Floor'] %}<option {% if form.house_type==x %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></label>
+<label>Furnishing Status<select name="furnishing_status">{% for x in ['Unfurnished','Semi-Furnished','Furnished'] %}<option {% if form.furnishing_status==x %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></label>
+<label>Parking Spaces<select name="parking">{% for n in range(0,4) %}<option {% if form.parking|string==n|string %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>
+<label>Year Built<input type="number" name="year_built" min="1900" max="2026" value="{{ form.year_built }}" required></label>
+<button class="btn primary full" type="submit">Calculate Estimated Price →</button>
+</form></section>
+<section class="section-card prediction-result"><div class="section-heading"><h2>⌂ Prediction Result</h2></div>
+{% if result %}<div class="result-house">⌂</div><span class="green-label">ESTIMATED HOUSE PRICE</span><div class="big-price">₹ {{ "%.2f"|format(result.price) }} Lakh</div><div class="investment-pill">↗ Estimated range</div><div class="range-grid"><div><b>₹ {{ "%.2f"|format(result.low) }} L</b><span>Lower estimate</span></div><div><b>₹ {{ "%.2f"|format(result.price) }} L</b><span>Predicted price</span></div><div><b>₹ {{ "%.2f"|format(result.high) }} L</b><span>Upper estimate</span></div></div><div class="note-box">Range is a simple ±12% display around the model estimate, not a statistically calibrated confidence interval.</div>{% else %}<div class="empty-result"><div class="empty-icon">₹</div><h3>Your estimate will appear here</h3><p>Complete the property details and click “Calculate Estimated Price”.</p></div>{% endif %}
+</section></div>{% endblock %}

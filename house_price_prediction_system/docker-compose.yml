@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: house-price-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: houseprices
+      POSTGRES_USER: houseuser
+      POSTGRES_PASSWORD: housepass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U houseuser -d houseprices"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  web:
+    build: .
+    container_name: house-price-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://houseuser:housepass@db:5432/houseprices
+      FLASK_SECRET_KEY: change-this-before-deployment
+      PORT: 5000
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data
+      - ./static/charts:/app/static/charts
+
+volumes:
+  postgres_data:

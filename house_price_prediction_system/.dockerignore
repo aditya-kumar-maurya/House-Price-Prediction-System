@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.git/
+.env
+house_prices.db
+house_price_model.joblib

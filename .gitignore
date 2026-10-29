@@ -1,0 +1,16 @@
+# Environment secrets
+.env
+.env.*
+!.env.example
+house_price_prediction_system/.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# IDE files
+.idea/

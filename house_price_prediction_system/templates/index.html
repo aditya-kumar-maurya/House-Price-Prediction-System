@@ -1,0 +1,50 @@
+{% extends "base.html" %}{% block title %}Home | House Price Prediction{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy"><span class="eyebrow">SMART REAL ESTATE ANALYTICS</span><h1>House Price<br><em>Prediction System</em></h1>
+  <p>Analyze real estate data using Machine Learning and predict house prices. Get useful insights for buying, selling, or investment decisions.</p>
+  <div class="hero-actions"><a class="btn primary" href="{{ url_for('predict') }}">Predict House Price →</a><a class="btn outline" href="#analytics">Explore Dashboard</a></div></div>
+ <div class="hero-visual">
+    <img
+        src="{{ url_for('static', filename='images/house.png') }}"
+        alt="Modern house exterior"
+        class="hero-house-image"
+    >
+</div>
+</section>
+<section class="stats-grid">
+  <div class="stat-card purple"><div class="stat-icon">⌂</div><div><strong>{{ "{:,}".format(stats.n|int) }}</strong><span>Total Properties</span><small>Property records in database</small></div></div>
+  <div class="stat-card green"><div class="stat-icon">₹</div><div><strong>₹ {{ "%.2f"|format(stats.avg_price or 0) }} Lakh</strong><span>Average House Price</span><small>Across listed properties</small></div></div>
+  <div class="stat-card pink"><div class="stat-icon">⌖</div><div><strong>{{ (stats.avg_area or 0)|round|int }} sq ft</strong><span>Average Property Area</span><small>Typical listed area</small></div></div>
+  <div class="stat-card blue"><div class="stat-icon">▥</div><div><strong>{{ (model_metrics.r2 * 100)|round|int }}%</strong><span>Model R² Score</span><small>Random Forest Regressor</small></div></div>
+</section>
+<section id="analytics" class="section-card">
+  <div class="section-heading"><h2>▦ Real Estate Analytics</h2><span class="muted">Dataset overview · demo data</span></div>
+  <div class="chart-grid">
+    <div class="chart-card"><h3>Price Distribution</h3><img src="{{ url_for('static', filename='charts/price_distribution.png') }}" alt="Price distribution chart"></div>
+    <div class="chart-card"><h3>Price vs Area</h3><img src="{{ url_for('static', filename='charts/price_vs_area.png') }}" alt="Price vs area chart"></div>
+    <div class="chart-card"><h3>Average Price by City</h3><img src="{{ url_for('static', filename='charts/city_prices.png') }}" alt="Average city prices chart"></div>
+    <div class="chart-card"><h3>House Type Distribution</h3><img src="{{ url_for('static', filename='charts/house_types.png') }}" alt="House type distribution chart"></div>
+  </div>
+</section>
+<section class="two-col">
+  <div class="section-card"><div class="section-heading"><h2>⌂ Quick House Price Prediction</h2><a class="text-link" href="{{ url_for('predict') }}">Open full form →</a></div>
+  <form action="{{ url_for('predict') }}" method="post" class="compact-form">
+    <label>City<select name="city">{% for c in ['Hyderabad','Bangalore','Mumbai','Delhi','Pune','Chennai','Kolkata','Noida','Gurgaon','Ahmedabad'] %}<option>{{ c }}</option>{% endfor %}</select></label>
+    <label>Area (sq ft)<input name="area_sqft" type="number" min="100" value="1200" required></label>
+    <label>Bedrooms<select name="bedrooms">{% for n in range(1,7) %}<option {% if n==3 %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>
+    <label>Bathrooms<select name="bathrooms">{% for n in range(1,6) %}<option {% if n==2 %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>
+    <label>House Type<select name="house_type">{% for x in ['Apartment','Independent House','Villa','Builder Floor'] %}<option>{{ x }}</option>{% endfor %}</select></label>
+    <label>Furnishing<select name="furnishing_status">{% for x in ['Unfurnished','Semi-Furnished','Furnished'] %}<option {% if x=='Semi-Furnished' %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></label>
+    <label>Parking<select name="parking">{% for n in range(0,4) %}<option {% if n==1 %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>
+    <label>Year Built<input name="year_built" type="number" min="1900" max="2026" value="2018" required></label>
+    <button class="btn primary full" type="submit">⌂ Predict House Price</button>
+  </form></div>
+  <div class="section-card result-preview"><div class="section-heading"><h2>◈ Model Performance</h2><a class="text-link" href="{{ url_for('model_page') }}">Details →</a></div>
+  <div class="metric-row"><span>Mean Absolute Error</span><b>{{ model_metrics.mae }} lakh</b></div><div class="metric-row"><span>Root Mean Squared Error</span><b>{{ model_metrics.rmse }} lakh</b></div><div class="metric-row"><span>R² Score</span><b>{{ model_metrics.r2 }}</b></div>
+  <div class="note-box">ⓘ This is an educational demo. Synthetic sample data is used unless you import a real estate CSV. Predictions are estimates, not professional valuations.</div>
+  <h3 class="subhead">Recent Predictions</h3>{% if recent %}<div class="mini-list">{% for r in recent %}<div><span>{{ r.city }} · {{ r.area_sqft }} sq ft</span><b>₹ {{ "%.2f"|format(r.predicted_price) }} L</b></div>{% endfor %}</div>{% else %}<p class="muted">Your recent predictions will appear here.</p>{% endif %}
+  </div>
+</section>
+<section class="section-card"><div class="section-heading"><h2>▥ Property Analysis</h2><a class="text-link" href="{{ url_for('analysis') }}">View all analysis →</a></div><div class="single-chart"><img src="{{ url_for('static', filename='charts/bedrooms.png') }}" alt="Average price by bedrooms"></div></section>
+{% endblock %}

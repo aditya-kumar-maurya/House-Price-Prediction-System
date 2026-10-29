@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block title %}Houses{% endblock %}{% block content %}
+<div class="page-title"><div><span class="eyebrow">PROPERTY MANAGEMENT</span><h1>Houses & Properties</h1><p>Search, review, add and remove property records.</p></div></div>
+<div class="section-card"><div class="section-heading"><h2>＋ Add Property</h2></div>
+<form method="post" action="{{ url_for('add_house') }}" class="form-grid add-form">
+<label>City<input name="city" required placeholder="e.g. Hyderabad"></label><label>Area (sq ft)<input name="area_sqft" type="number" min="100" required value="1200"></label>
+<label>Bedrooms<input name="bedrooms" type="number" min="1" max="10" required value="3"></label><label>Bathrooms<input name="bathrooms" type="number" min="1" max="10" required value="2"></label>
+<label>House Type<select name="house_type">{% for x in ['Apartment','Independent House','Villa','Builder Floor'] %}<option>{{ x }}</option>{% endfor %}</select></label>
+<label>Furnishing<select name="furnishing_status">{% for x in ['Unfurnished','Semi-Furnished','Furnished'] %}<option>{{ x }}</option>{% endfor %}</select></label>
+<label>Parking<input name="parking" type="number" min="0" max="10" value="1"></label><label>Year Built<input name="year_built" type="number" min="1900" max="2026" value="2020"></label>
+<label>Listing Price (₹ lakh)<input name="price_lakh" type="number" step=".01" min=".01" value="65" required></label>
+<label>Status<select name="status"><option>Available</option><option>Sold</option><option>Under Review</option></select></label><button class="btn primary" type="submit">Save Property</button>
+</form></div>
+<div class="section-card"><div class="section-heading"><h2>Property Inventory <span class="count-badge">{{ houses|length }}</span></h2><form class="inline-search" method="get"><input name="q" value="{{ q }}" placeholder="Search city or type"><button class="btn small outline">Search</button></form></div>
+<div class="table-scroll"><table><thead><tr><th>ID</th><th>City</th><th>Area</th><th>Beds</th><th>Baths</th><th>Type</th><th>Furnishing</th><th>Year</th><th>Price (L)</th><th>Status</th><th>Action</th></tr></thead><tbody>{% for h in houses %}<tr><td>P{{ "%03d"|format(h.id) }}</td><td>{{ h.city }}</td><td>{{ h.area_sqft }}</td><td>{{ h.bedrooms }}</td><td>{{ h.bathrooms }}</td><td>{{ h.house_type }}</td><td>{{ h.furnishing_status }}</td><td>{{ h.year_built }}</td><td>₹ {{ "%.2f"|format(h.price_lakh) }}</td><td><span class="status">{{ h.status }}</span></td><td><form method="post" action="{{ url_for('delete_house', house_id=h.id) }}" onsubmit="return confirm('Delete this property?')"><button class="btn danger small">Delete</button></form></td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}
