@@ -1,4 +1,5 @@
 import os
+import tempfile
 from dotenv import load_dotenv
 from datetime import datetime
 from io import BytesIO
@@ -55,7 +56,7 @@ elif DATABASE_URL.startswith("postgresql://"):
     DATABASE_URL = "postgresql+psycopg://" + DATABASE_URL[len("postgresql://"):]
 
 
-MODEL_PATH = "house_price_model.joblib"
+MODEL_PATH = os.path.join(tempfile.gettempdir(), "house_price_model.joblib")
 DATA_PATH = "data/house_prices.csv"
 
 
@@ -80,8 +81,6 @@ CATEGORICAL_FEATURES = [
 FEATURES = NUMERIC_FEATURES + CATEGORICAL_FEATURES
 TARGET = "price_lakh"
 
-os.makedirs("data", exist_ok=True)
-os.makedirs("static/charts", exist_ok=True)
 
 
 # --------------------------------------------------
@@ -455,6 +454,9 @@ def query_df(sql, params=None):
 # 9. GENERATE DARK BLUE ANALYTICS CHARTS
 # --------------------------------------------------
 
+CHART_IMAGES = {}
+
+
 def make_charts():
 
     df = query_df("""
@@ -526,13 +528,20 @@ def make_charts():
 
         fig.tight_layout()
 
+        image_buffer = BytesIO()
+
         fig.savefig(
-            filename,
+            image_buffer,
+            format="png",
             dpi=150,
             facecolor="#0b1730",
             edgecolor="none",
             bbox_inches="tight"
         )
+
+        image_buffer.seek(0)
+        chart_name = os.path.basename(filename)
+        CHART_IMAGES[chart_name] = image_buffer.getvalue()
 
         plt.close(fig)
 
@@ -707,8 +716,42 @@ def make_charts():
         "static/charts/bedrooms1.png"
     )
 
+
 # --------------------------------------------------
-# 10. DASHBOARD METRICS
+# 10. SERVE CHARTS FROM MEMORY (VERCEL SAFE)
+# --------------------------------------------------
+
+@app.route("/charts/<filename>")
+def chart_image(filename):
+
+    allowed_charts = {
+        "price_distribution1.png",
+        "price_vs_area.png",
+        "city_prices1.png",
+        "house_types1.png",
+        "bedrooms1.png"
+    }
+
+    if filename not in allowed_charts:
+        return "Chart not found", 404
+
+    if filename not in CHART_IMAGES:
+        make_charts()
+
+    image_data = CHART_IMAGES.get(filename)
+
+    if not image_data:
+        return "Chart unavailable", 404
+
+    return send_file(
+        BytesIO(image_data),
+        mimetype="image/png",
+        download_name=filename
+    )
+
+
+# --------------------------------------------------
+# 11. DASHBOARD METRICS
 # --------------------------------------------------
 
 def metrics():
@@ -732,7 +775,7 @@ def metrics():
 
 
 # --------------------------------------------------
-# 11. HOME PAGE
+# 12. HOME PAGE
 # --------------------------------------------------
 
 @app.route("/")
@@ -769,7 +812,7 @@ def home():
 
 
 # --------------------------------------------------
-# 12. HOUSE PRICE PREDICTION
+# 13. HOUSE PRICE PREDICTION
 # --------------------------------------------------
 
 @app.route("/predict", methods=["GET", "POST"])
@@ -869,7 +912,7 @@ def predict():
 
 
 # --------------------------------------------------
-# 13. ANALYSIS PAGE
+# 14. ANALYSIS PAGE
 # --------------------------------------------------
 
 @app.route("/analysis")
@@ -902,7 +945,7 @@ def analysis():
 
 
 # --------------------------------------------------
-# 14. HOUSE MANAGEMENT
+# 15. HOUSE MANAGEMENT
 # --------------------------------------------------
 
 @app.route("/houses")
@@ -1011,7 +1054,7 @@ def delete_house(house_id):
 
 
 # --------------------------------------------------
-# 15. PREDICTION HISTORY
+# 16. PREDICTION HISTORY
 # --------------------------------------------------
 
 @app.route("/history")
@@ -1049,7 +1092,7 @@ def delete_prediction(prediction_id):
 
 
 # --------------------------------------------------
-# 16. DATASET PAGE AND CSV IMPORT
+# 17. DATASET PAGE AND CSV IMPORT
 # --------------------------------------------------
 
 @app.route("/dataset")
@@ -1144,7 +1187,7 @@ def upload_dataset():
 
 
 # --------------------------------------------------
-# 17. MODEL PAGE
+# 18. MODEL PAGE
 # --------------------------------------------------
 
 @app.route("/model", methods=["GET", "POST"])
@@ -1178,7 +1221,7 @@ def model_page():
 
 
 # --------------------------------------------------
-# 18. ABOUT PAGE
+# 19. ABOUT PAGE
 # --------------------------------------------------
 
 @app.route("/about")
@@ -1187,7 +1230,7 @@ def about():
 
 
 # --------------------------------------------------
-# 19. DATABASE HEALTH CHECK
+# 20. DATABASE HEALTH CHECK
 # --------------------------------------------------
 
 @app.route("/health")
@@ -1214,7 +1257,7 @@ def health():
 
 
 # --------------------------------------------------
-# 20. STARTUP
+# 21. STARTUP
 # --------------------------------------------------
 
 with app.app_context():
@@ -1233,7 +1276,7 @@ with app.app_context():
 
 
 # --------------------------------------------------
-# 21. RUN FLASK APPLICATION
+# 22. RUN FLASK APPLICATION
 # --------------------------------------------------
 
 if __name__ == "__main__":
@@ -1243,4 +1286,5 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", "5000")),
         debug=os.getenv("FLASK_DEBUG", "0") == "1"
     )
+
 
