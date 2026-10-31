@@ -285,7 +285,6 @@ def metrics():
 def home():
     try:
         stats = metrics()
-        make_charts()
         recent = query_df("SELECT * FROM prediction_history ORDER BY id DESC LIMIT 5")
         model_data = train_model()
         return render_template("index.html", stats=stats, recent=recent.to_dict("records"),
@@ -324,7 +323,6 @@ def predict():
 
 @app.route("/analysis")
 def analysis():
-    make_charts()
     data = query_df("SELECT city, house_type, furnishing_status, area_sqft, bedrooms, bathrooms, parking, year_built, price_lakh FROM properties")
     corr_cols = ["area_sqft","bedrooms","bathrooms","parking","year_built","price_lakh"]
     corr = data[corr_cols].corr(numeric_only=True).round(2).to_dict() if not data.empty else {}
