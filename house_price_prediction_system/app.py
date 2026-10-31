@@ -259,16 +259,23 @@ def make_charts():
 
 @app.route("/charts/<filename>")
 def chart_image(filename):
-    allowed = {"price_distribution.png", "price_vs_area.png",
-               "city_prices.png", "house_types.png", "bedrooms.png"}
+    """Serve the original chart PNG files stored in static/charts."""
+    allowed = {
+        "price_distribution.png",
+        "price_vs_area.png",
+        "city_prices.png",
+        "house_types.png",
+        "bedrooms.png",
+    }
+
     if filename not in allowed:
         return "Chart not found", 404
-    if filename not in CHART_IMAGES:
-        make_charts()
-    image_data = CHART_IMAGES.get(filename)
-    if not image_data:
+
+    image_path = os.path.join(app.static_folder, "charts", filename)
+    if not os.path.isfile(image_path):
         return "Chart unavailable", 404
-    return send_file(BytesIO(image_data), mimetype="image/png", download_name=filename)
+
+    return send_file(image_path, mimetype="image/png", conditional=True)
 
 def metrics():
     data = query_df("SELECT COUNT(*) AS n, AVG(price_lakh) AS avg_price, AVG(area_sqft) AS avg_area FROM properties")

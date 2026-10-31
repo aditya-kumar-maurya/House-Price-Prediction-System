@@ -17,107 +17,86 @@
 
 <div class="chart-grid analysis-grid">
 
-```
-<!-- 1. PRICE DISTRIBUTION -->
-<div class="chart-card">
-    <h3>Price Distribution</h3>
-
-    <img
-        src="{{ url_for('chart_image', filename='price_distribution.png') }}"
-        alt="Price Distribution Chart"
-        loading="lazy"
-    >
-</div>
-
-
-<!-- 2. PRICE VS AREA -->
-<div class="chart-card">
-    <h3>Price vs Area</h3>
-
-    <img
-        src="{{ url_for('chart_image', filename='price_vs_area.png') }}"
-        alt="Price vs Area Chart"
-        loading="lazy"
-    >
-</div>
-
-
-<!-- 3. AVERAGE PRICE BY CITY -->
-<div class="chart-card">
-    <h3>Average Price by City</h3>
-
-    <img
-        src="{{ url_for('chart_image', filename='city_prices.png') }}"
-        alt="Average Price by City Chart"
-        loading="lazy"
-    >
-</div>
-
-
-<!-- 4. HOUSE TYPE DISTRIBUTION -->
-<div class="chart-card">
-    <h3>House Type Distribution</h3>
-
-    <img
-        src="{{ url_for('chart_image', filename='house_types.png') }}"
-        alt="House Type Distribution Chart"
-        loading="lazy"
-    >
-</div>
-
-
-<!-- 5. AVERAGE PRICE BY BEDROOMS -->
-<div class="chart-card">
-    <h3>Average Price by Bedrooms</h3>
-
-    <img
-        src="{{ url_for('chart_image', filename='bedrooms.png') }}"
-        alt="Average Price by Bedrooms Chart"
-        loading="lazy"
-    >
-</div>
-
-
-<!-- 6. CORRELATION MATRIX -->
-<div class="chart-card">
-    <h3>Correlation Matrix</h3>
-
-    <div class="table-scroll">
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Feature</th>
-
-                    {% for c in columns %}
-                    <th>{{ c }}</th>
-                    {% endfor %}
-
-                </tr>
-            </thead>
-
-            <tbody>
-
-                {% for r in columns %}
-                <tr>
-
-                    <th>{{ r }}</th>
-
-                    {% for c in columns %}
-                    <td>
-                        {{ corr.get(r, {}).get(c, '—') }}
-                    </td>
-                    {% endfor %}
-
-                </tr>
-                {% endfor %}
-
-            </tbody>
-        </table>
-
+    <!-- 1. PRICE DISTRIBUTION -->
+    <div class="chart-card">
+        <h3>Price Distribution</h3>
+        <img
+            src="{{ url_for('chart_image', filename='price_distribution.png') }}"
+            alt="Price Distribution Chart"
+            loading="lazy"
+        >
     </div>
-</div>
-```
+
+    <!-- 2. PRICE VS AREA -->
+    <div class="chart-card">
+        <h3>Price vs Area</h3>
+        <img
+            src="{{ url_for('chart_image', filename='price_vs_area.png') }}"
+            alt="Price vs Area Chart"
+            loading="lazy"
+        >
+    </div>
+
+    <!-- 3. AVERAGE PRICE BY CITY -->
+    <div class="chart-card">
+        <h3>Average Price by City</h3>
+        <img
+            src="{{ url_for('chart_image', filename='city_prices.png') }}"
+            alt="Average Price by City Chart"
+            loading="lazy"
+        >
+    </div>
+
+    <!-- 4. HOUSE TYPE DISTRIBUTION -->
+    <div class="chart-card">
+        <h3>House Type Distribution</h3>
+        <img
+            src="{{ url_for('chart_image', filename='house_types.png') }}"
+            alt="House Type Distribution Chart"
+            loading="lazy"
+        >
+    </div>
+
+    <!-- 5. AVERAGE PRICE BY BEDROOMS -->
+    <div class="chart-card">
+        <h3>Average Price by Bedrooms</h3>
+        <img
+            src="{{ url_for('chart_image', filename='bedrooms.png') }}"
+            alt="Average Price by Bedrooms Chart"
+            loading="lazy"
+        >
+    </div>
+
+    <!-- 6. CORRELATION MATRIX -->
+    <div class="chart-card">
+        <h3>Correlation Matrix</h3>
+
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        {% for c in columns %}
+                        <th>{{ c }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for r in columns %}
+                    <tr>
+                        <th>{{ r }}</th>
+                        {% for c in columns %}
+                        <td>
+                            {{ corr.get(r, {}).get(c, '—') }}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </div>
 
